@@ -2,6 +2,7 @@
 
 namespace Laracasts\Flash;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\ServiceProvider;
 
 class FlashServiceProvider extends ServiceProvider
@@ -20,13 +21,24 @@ class FlashServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(
-            'Laracasts\Flash\SessionStore',
-            'Laracasts\Flash\LaravelSessionStore'
-        );
+        $this->app->bind('Laracasts\Flash\SessionStore', 'Laracasts\Flash\LaravelSessionStore');
 
         $this->app->singleton('flash', function () {
             return $this->app->make('Laracasts\Flash\FlashNotifier');
+        });
+
+        RedirectResponse::macro('withFlash', function ($message = null, $level = 'info', $important = false) {
+            $flash = app('flash');
+
+            if (! is_null($message)) {
+                $flash->message($message, $level);
+
+                if ($important) {
+                    $flash->important();
+                }
+            }
+
+            return $this;
         });
     }
 
