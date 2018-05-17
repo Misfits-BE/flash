@@ -39,7 +39,7 @@ class LaravelSessionStore implements SessionStore
      * @param  mixed  $default
      * @return mixed
      */
-    public function get($key, $value = null)
+    public function get($key, $default = null)
     {
         return $this->session->get($key, $default);
     }
